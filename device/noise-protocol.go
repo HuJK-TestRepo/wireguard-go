@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"sync"
 	"time"
+	"bytes"
 	"encoding/base64"
 
 	"golang.org/x/crypto/blake2s"
