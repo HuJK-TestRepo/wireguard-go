@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"sync"
 	"time"
+	"encoding/base64"
 
 	"golang.org/x/crypto/blake2s"
 	"golang.org/x/crypto/chacha20poly1305"
@@ -246,6 +247,13 @@ func (device *Device) CreateMessageInitiation(peer *Peer) (*MessageInitiation, e
 	return &msg, nil
 }
 
+func (pk NoisePublicKey) ToString() string {
+	if bytes.Equal(pk[:], make([]byte, len(pk))) {
+		return ""
+	}
+	return string(base64.StdEncoding.EncodeToString(pk[:]))
+}
+
 func (device *Device) ConsumeMessageInitiation(msg *MessageInitiation) *Peer {
 	var (
 		hash     [blake2s.Size]byte
@@ -280,6 +288,9 @@ func (device *Device) ConsumeMessageInitiation(msg *MessageInitiation) *Peer {
 	mixHash(&hash, &hash, msg.Static[:])
 
 	// lookup peer
+
+
+	fmt.Printf("PunKey= %v\n",peerPK.ToString())
 
 	peer := device.LookupPeer(peerPK)
 	if peer == nil || !peer.isRunning.Get() {
